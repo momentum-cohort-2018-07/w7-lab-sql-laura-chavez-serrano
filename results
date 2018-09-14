@@ -1,0 +1,94 @@
+#Find all time entries.
+##SELECT * FROM time_entries
+500 rows returned in 14ms from: SELECT * FROM time_entries
+
+#Find the developer who joined most recently.
+##SELECT  name, max(joined_on)
+##FROM developers
+1 rows returned in 1ms from: SELECT  name, max(joined_on)
+FROM developers
+
+#Find the number of projects for each client.
+##SELECT  * , COUNT(id)
+## FROM projects
+ GROUP BY client_id;
+9 rows returned in 2ms from: SELECT  * , COUNT(id)
+ FROM projects
+ GROUP BY client_id;
+
+ #Find all time entries, and show each one's client name next to it.
+##SELECT time_entries.duration,time_entries.project_id,time_entries.updated_at,clients.name
+##FROM time_entries
+##INNER JOIN projects ON time_entries.project_id = projects.id
+##INNER JOIN clients ON clients.id = projects.client_id
+500 rows returned in 10ms from: SELECT time_entries.duration,time_entries.project_id,time_entries.updated_at,clients.name
+FROM time_entries
+INNER JOIN projects ON time_entries.project_id = projects.id
+INNER JOIN clients ON clients.id = projects.client_id
+
+#Find all developers in the "Ohio sheep" group.
+##SELECT developers.name, groups.name
+##FROM group_assignments
+##INNER JOIN  groups ON group_assignments.group_id = groups.id
+##INNER JOIN developers ON developers.id = group_assignments.developer_id
+##WHERE groups.name LIKE '%Ohio%'
+3 rows returned in 1ms from: SELECT developers.name, groups.name
+FROM group_assignments
+INNER JOIN  groups ON group_assignments.group_id = groups.id
+INNER JOIN developers ON developers.id = group_assignments.developer_id
+WHERE groups.name LIKE '%Ohio%'
+
+#Find the total number of hours worked for each client.
+##SELECT clients.name, sum(time_entries.duration)
+##FROM projects
+##INNER JOIN time_entries ON  time_entries.project_id= projects.id
+##INNER JOIN clients ON  projects.client_id= clients.id
+##GROUP BY clients.id
+9 rows returned in 6ms from: SELECT clients.name,
+sum(time_entries.duration)
+FROM projects
+INNER JOIN time_entries ON  time_entries.project_id= projects.id
+INNER JOIN clients ON  projects.client_id= clients.id
+
+#Find the client for whom Mrs. Lupe Schowalter (the developer) has worked the greatest number of hours.
+##SELECT clients.name, developers.name,
+##sum(time_entries.duration)
+##FROM projects
+##INNER JOIN project_assignments ON projects.id= project_assignments.id
+##INNER JOIN clients ON  clients.id= projects.client_id
+##INNER JOIN time_entries ON project_assignments.developer_id = ##time_entries.developer_id
+##INNER JOIN developers ON time_entries.id = developers.id
+##WHERE developers.name = "Mrs. Lupe Schowalter"
+##GROUP BY clients.name;
+1 rows returned in 2ms from: SELECT clients.name, developers.name,
+sum(time_entries.duration)
+FROM projects
+INNER JOIN project_assignments ON projects.id= project_assignments.id
+INNER JOIN clients ON  clients.id= projects.client_id
+INNER JOIN time_entries ON project_assignments.developer_id = time_entries.developer_id
+INNER JOIN developers ON time_entries.id = developers.id
+WHERE developers.name = "Mrs. Lupe Schowalter"
+GROUP BY clients.name;
+
+#List all client names with their project names (multiple rows for one client is fine). Make sure that clients still show up even if they have no projects.
+##SELECT  projects.name AS "PROJECT", clients.name AS "CLIENT"
+##FROM clients
+##LEFT OUTER JOIN projects ON clients.id = projects.client_id
+33 rows returned in 1ms from: SELECT  projects.name AS "PROJECT", clients.name AS "CLIENT"
+FROM clients
+LEFT OUTER JOIN projects ON clients.id = projects.client_id
+
+#Find all developers who have written no comments.
+##SELECT cast(NULL as integer),
+##       developers.name 
+##FROM developers
+##WHERE NOT EXISTS (
+##    SELECT * FROM comments
+##             WHERE developers.id = comments.developer_id)
+13 rows returned in 2ms from: SELECT cast(NULL as integer),
+       developers.name
+FROM developers
+WHERE NOT EXISTS (
+    SELECT * FROM comments
+             WHERE developers.id = comments.developer_id)
+
